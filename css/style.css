@@ -38,7 +38,7 @@ body {
   white-space: nowrap;
 }
 
-/* The column starts left of centre instead of floating in the middle. */
+/* The column starts left of centre. */
 .app {
   max-width: 600px;
   margin: 0 auto 0 clamp(0px, 10vw, 9rem);
