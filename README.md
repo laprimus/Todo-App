@@ -2,7 +2,7 @@
 
 A simple to-do list built with plain HTML, CSS and vanilla JavaScript. Tasks are saved in your browser, so they are still there after a refresh. No frameworks and no build step.
 
-<!-- **Live demo:**  -->
+**Live demo:** https://laprimus.github.io/Todo-App/
 
 ![To-do list on desktop](screenshots/desktop.png)
 
