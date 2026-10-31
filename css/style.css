@@ -1,0 +1,345 @@
+:root {
+  --paper: #f4f7fc;     /* page background */
+  --sheet: #fdfdff;     /* the graph-paper sheet */
+  --grid: #e1e8f4;      /* grid lines */
+  --ink: #20242c;       /* graphite text */
+  --muted: #67707f;     /* secondary text */
+  --pen: #1c3fd0;       /* ballpoint blue: ticks, strikes, active states */
+  --pen-dark: #1632a8;
+  --red: #c62828;       /* red pen: errors and delete */
+  --cell: 36px;         /* one grid square */
+  --font: "Avenir Next", "Segoe UI Variable Text", "Segoe UI", system-ui,
+          -apple-system, Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 3.5rem 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The column starts left of centre instead of floating in the middle. */
+.app {
+  max-width: 600px;
+  margin: 0 auto 0 clamp(0px, 10vw, 9rem);
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  margin-bottom: 2rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 9vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.today-date {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Add-task form ---------- */
+.task-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.task-form input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  padding: 0.7rem 0.1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--ink);
+  border-radius: 0;
+}
+
+.task-form input::placeholder {
+  color: var(--muted);
+}
+
+.task-form input:focus {
+  outline: none;
+  border-bottom-color: var(--pen);
+}
+
+.task-form input.invalid {
+  border-bottom-color: var(--red);
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--pen);
+  border: none;
+  border-radius: 3px;
+  padding: 0.7rem 1.25rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn:hover {
+  background: var(--pen-dark);
+}
+
+.error-message {
+  min-height: 1.5rem;
+  margin: 0.4rem 0 1rem;
+  font-size: 0.95rem;
+  color: var(--red);
+}
+
+:focus-visible {
+  outline: 3px solid var(--pen);
+  outline-offset: 2px;
+}
+
+/* ---------- The graph-paper sheet ---------- */
+.sheet {
+  min-height: calc(var(--cell) * 4);
+  background-color: var(--sheet);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+  box-shadow: inset -1px 0 0 var(--grid), inset 0 -1px 0 var(--grid);
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-left: 12px;
+  min-height: var(--cell);
+}
+
+/* The checkbox and the pen tick drawn over it */
+.check {
+  position: relative;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 7px;
+}
+
+.check input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  background: var(--sheet);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.tick {
+  position: absolute;
+  left: -2px;
+  top: -6px;
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0s linear 0.3s; /* hide after the tick has un-drawn */
+}
+
+.tick path {
+  fill: none;
+  stroke: var(--pen);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.28s ease-out;
+}
+
+.check input:checked + .tick {
+  opacity: 1;
+  transition: none;
+}
+
+.check input:checked + .tick path {
+  stroke-dashoffset: 0;
+}
+
+.task label {
+  flex: 1;
+  min-width: 0;
+  line-height: var(--cell);
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* Completed: struck through in pen, text fades back */
+.task.completed label {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--pen);
+  text-decoration-thickness: 2px;
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  width: var(--cell);
+  height: var(--cell);
+  padding: 0;
+  font: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: var(--red);
+}
+
+.empty-message {
+  margin: 0;
+  padding: 0 12px;
+  line-height: var(--cell);
+  color: var(--muted);
+}
+
+.empty-message:empty {
+  display: none;
+}
+
+/* ---------- Footer: counter, filters, clear ---------- */
+.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: 1.25rem;
+}
+
+.task-counter {
+  margin: 0;
+  font-weight: 600;
+}
+
+#count-number {
+  color: var(--pen);
+  font-variant-numeric: tabular-nums;
+}
+
+.filters {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.filter-btn {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  color: var(--ink);
+}
+
+.filter-btn[aria-pressed="true"] {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--pen);
+}
+
+.link-btn {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0.35rem 0;
+  cursor: pointer;
+}
+
+.link-btn:hover:not(:disabled) {
+  color: var(--red);
+}
+
+.link-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tick path,
+  .tick {
+    transition: none;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 480px) {
+  body {
+    padding: 2rem 1rem;
+  }
+
+  .app {
+    margin-left: 0;
+  }
+
+  .app-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .app-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters {
+    margin-left: -0.6rem;
+  }
+}
